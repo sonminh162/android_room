@@ -1,21 +1,25 @@
 package com.lifetime.otherroomexample;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Update;
-
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class UpdateTaskActivity extends AppCompatActivity {
 
-    private EditText editTextTask,editTextDesc,editTextFinishBy;
+    private EditText editTextTask,editTextDesc,editTextFinishBy,editTextBirth;
     private CheckBox checkBoxFinished;
 
     @Override
@@ -23,11 +27,19 @@ public class UpdateTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_task);
 
-        editTextTask = findViewById(R.id.editTextTask);
-        editTextDesc = findViewById(R.id.editTextDesc);
-        editTextFinishBy = findViewById(R.id.editTextFinishBy);
+        editTextTask = findViewById(R.id.update_name);
+        editTextDesc = findViewById(R.id.update_address);
+        editTextFinishBy = findViewById(R.id.update_subjects);
+        editTextBirth = findViewById(R.id.update_birthday);
 
         checkBoxFinished = findViewById(R.id.checkBoxFinished);
+
+        editTextBirth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickDate();
+            }
+        });
 
         final Task task = (Task) getIntent().getSerializableExtra("task");
         loadTask(task);
@@ -64,10 +76,28 @@ public class UpdateTaskActivity extends AppCompatActivity {
         });
     }
 
+    private void pickDate(){
+        final Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DATE);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                //i: year i1: month i2:day
+                calendar.set(i,i1,i2);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                editTextBirth.setText(simpleDateFormat.format(calendar.getTime()));
+            }
+        },year,month,day);
+        datePickerDialog.show();
+    }
+
     private void loadTask(Task task) {
         editTextTask.setText(task.getTask());
         editTextDesc.setText(task.getDesc());
         editTextFinishBy.setText(task.getFinishBy());
+        editTextBirth.setText(task.getBirthday());
         checkBoxFinished.setChecked(task.isFinished());
     }
 
@@ -75,6 +105,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
         final String sTask = editTextTask.getText().toString().trim();
         final String sDesc = editTextDesc.getText().toString().trim();
         final String sFinishBy = editTextFinishBy.getText().toString().trim();
+        final String birthday = editTextBirth.getText().toString().trim();
         final boolean sChecked = checkBoxFinished.isChecked();
 
         if(sTask.isEmpty()) {
@@ -95,13 +126,20 @@ public class UpdateTaskActivity extends AppCompatActivity {
             return;
         }
 
+        if(birthday.isEmpty()){
+            editTextBirth.setError("Birthday required");
+            editTextBirth.requestFocus();
+            return;
+        }
+
         class UpdateTask extends AsyncTask<Void,Void,Void> {
 
             @Override
             protected Void doInBackground(Void... voids) {
                 task.setTask(sTask);
-                task.setTask(sDesc);
+                task.setDesc(sDesc);
                 task.setFinishBy(sFinishBy);
+                task.setBirthday(birthday);
                 task.setFinished(sChecked);
                 DatabaseClient.getInstance(getApplicationContext()).getAppDatabase()
                         .taskDao()

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">OtherRoomExample</string>
+
+    <string-array name="numbers">
+        <item>Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
 </resources>

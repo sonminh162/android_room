@@ -34,10 +34,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = taskList.get(position);
         holder.bindView(task);
         if(task.isFinished()){
-            holder.textViewStatus.setText("Completed");
+            holder.textViewStatus.setText("Finished");
         }
         else{
-            holder.textViewStatus.setText("Not Completed");
+            holder.textViewStatus.setText("Studying");
         }
     }
 
@@ -48,7 +48,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewStatus, textViewTask, textViewDesc, textViewFinishBy;
+        TextView textViewStatus, textViewTask, textViewDesc, textViewFinishBy, textViewBirth;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,6 +57,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textViewTask = itemView.findViewById(R.id.textViewTask);
             textViewDesc = itemView.findViewById(R.id.textViewDesc);
             textViewFinishBy = itemView.findViewById(R.id.textViewFinishBy);
+            textViewBirth = itemView.findViewById(R.id.textViewBirth);
 
             itemView.setOnClickListener(this);
         }
@@ -75,6 +76,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textViewTask.setText(task.getTask());
             textViewDesc.setText(task.getDesc());
             textViewFinishBy.setText(task.getFinishBy());
+            textViewBirth.setText(task.getBirthday());
         }
     }
 }

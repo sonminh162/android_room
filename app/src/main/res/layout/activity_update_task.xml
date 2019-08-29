@@ -16,27 +16,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp15"
-            android:text="Update Task"
+            android:text="Update Student's Information"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
         <EditText
-            android:id="@+id/editTextTask"
+            android:id="@+id/update_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="task?"/>
+            android:hint="name?"/>
 
         <EditText
-            android:id="@+id/editTextDesc"
+            android:id="@+id/update_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="description..."/>
+            android:hint="address?"/>
 
         <EditText
-            android:id="@+id/editTextFinishBy"
+            android:id="@+id/update_subjects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="finish by?"/>
+            android:hint="subjects?"/>
+
+        <EditText
+            android:id="@+id/update_birthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="birthday?"/>
 
         <CheckBox
             android:id="@+id/checkBoxFinished"
@@ -56,7 +62,7 @@
             android:textColor="@color/aliceBlue"/>
         
         <Button
-            android:background="@color/cerise"
+            android:background="@color/cinnabar"
             android:textColor="@color/aliceBlue"
             android:textAllCaps="false"
             android:text="Delete"

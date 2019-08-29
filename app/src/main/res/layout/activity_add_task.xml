@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp15"
-            android:text="Add a Task"
+            android:text="Create Student's Information"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
@@ -24,19 +24,30 @@
             android:id="@+id/editTextTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="task?"/>
+            android:hint="name?"/>
 
         <EditText
             android:id="@+id/editTextDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="description..."/>
+            android:hint="address?"/>
 
         <EditText
             android:id="@+id/editTextFinishBy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="finish by?"/>
+            android:hint="subjects?"/>
+
+        <EditText
+            android:id="@+id/editTextDate"
+            android:hint="birthday?"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/create_gender"
+            android:layout_width="@dimen/dp120"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/button_save"

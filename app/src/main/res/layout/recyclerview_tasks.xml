@@ -46,6 +46,13 @@
                 android:layout_height="wrap_content"
                 android:text="5pm today"/>
 
+            <TextView
+                android:id="@+id/textViewBirth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="27/6/2019"/>
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

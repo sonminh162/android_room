@@ -12,7 +12,7 @@ public class Task implements Serializable {
     @PrimaryKey(autoGenerate =  true)
     private int id;
 
-    @ColumnInfo(name = "task")
+    @ColumnInfo(name = "task_field")
     private String task;
 
     @ColumnInfo(name = "desc")
@@ -23,6 +23,17 @@ public class Task implements Serializable {
 
     @ColumnInfo(name = "finished")
     private boolean finished;
+
+    @ColumnInfo(name = "birthday")
+    private String birthday;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 
     public int getId() {
         return id;
