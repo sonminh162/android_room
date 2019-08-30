@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                         .getInstance(getApplicationContext())
                         .getAppDatabase()
                         .taskDao()
-                        .searchTaskByTaskName(taskName);
+                        .searchTaskByTaskName(taskName.trim());
             }
 
             @Override

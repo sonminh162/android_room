@@ -56,9 +56,26 @@ public class UpdateTaskActivity extends AppCompatActivity implements AdapterView
         });
 
         final Task task = (Task) getIntent().getSerializableExtra("task");
-        loadTask(task);
 
-        createSpinner();
+        //----- spinner area
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.numbers,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        int malePosition = adapter.getPosition("Male");
+        int femalePosition = adapter.getPosition("Female");
+
+//        createSpinner();
+        //----- spinner area
+
+        loadTask(task);
+        boolean male = task.getGender().equals("Male");
+        if(male){
+            spinner.setSelection(malePosition);
+        }else{
+            spinner.setSelection(femalePosition);
+        }
 
         findViewById(R.id.button_update).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +113,14 @@ public class UpdateTaskActivity extends AppCompatActivity implements AdapterView
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+    }
+
+    private int createSpinnerAndGetResult(String compareValue){
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.numbers,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        return adapter.getPosition(compareValue);
     }
 
     private void pickDate(){
