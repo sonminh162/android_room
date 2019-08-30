@@ -23,8 +23,11 @@ public interface TaskDao {
     @Update
     void update(Task task);
 
-    @Query("SELECT * FROM task ORDER BY task_field")
-    List<Task> sortData();
+    @Query("SELECT * FROM task ORDER BY task_field DESC")
+    List<Task> sortDataAtoZ();
+
+    @Query("SELECT * FROM task ORDER BY task_field ASC")
+    List<Task> sortDataZtoA();
 
     @Query("SELECT * FROM task WHERE task_field LIKE '%' || :taskName || '%'")
     List<Task> searchTaskByTaskName(String taskName);

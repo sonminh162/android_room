@@ -44,6 +44,11 @@
             android:layout_height="wrap_content"
             android:hint="birthday?"/>
 
+        <Spinner
+            android:id="@+id/update_gender"
+            android:layout_width="@dimen/dp160"
+            android:layout_height="wrap_content"/>
+
         <CheckBox
             android:id="@+id/checkBoxFinished"
             android:layout_width="match_parent"

@@ -1,7 +1,5 @@
 package com.lifetime.otherroomexample;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,11 +14,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class AddTaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    public static final String DATE_FORMAT = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
     private EditText editTextTask,editTextDesc,editTextFinishBy,edtDate;
     private Spinner spinner;
 
@@ -28,6 +29,11 @@ public class AddTaskActivity extends AppCompatActivity implements AdapterView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
+
+        final TaskDao taskDao = DatabaseClient
+                .getInstance(getApplicationContext())
+                .getAppDatabase()
+                .taskDao();
 
         editTextTask = findViewById(R.id.editTextTask);
         editTextDesc = findViewById(R.id.editTextDesc);
@@ -47,7 +53,7 @@ public class AddTaskActivity extends AppCompatActivity implements AdapterView.On
         findViewById(R.id.button_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveTask();
+                saveTask(taskDao);
             }
         });
     }
@@ -76,12 +82,12 @@ public class AddTaskActivity extends AppCompatActivity implements AdapterView.On
         datePickerDialog.show();
     }
 
-    private void saveTask(){
+    private void saveTask(final TaskDao taskDao){
         final String sTask = editTextTask.getText().toString().trim();
         final String sDesc = editTextDesc.getText().toString().trim();
         final String sFinishBy = editTextFinishBy.getText().toString().trim();
         final String birthday = edtDate.getText().toString().trim();
-        final String sSpinner = spinner.getSelectedItem().toString();
+        final String sSpinner = spinner.getSelectedItem().toString().trim();
 
         if(sTask.isEmpty()){
             editTextTask.setError("Task required");
@@ -106,12 +112,20 @@ public class AddTaskActivity extends AppCompatActivity implements AdapterView.On
             return;
         }
 
+        boolean invalidDate = !birthday.matches(DATE_FORMAT);
+        if(invalidDate){
+            edtDate.setError("Format date");
+            edtDate.requestFocus();
+            return;
+        }
+
         if(sSpinner.equals("Gender")){
-            TextView errorText = (TextView) spinner.getSelectedItem();
-            errorText.setError("Gender required");
-            errorText.setTextColor(Color.RED);
+            TextView errorText = (TextView)spinner.getSelectedView();
+            errorText.setError("required");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
             errorText.setText("required");
             spinner.requestFocus();
+            return;
         }
 
         class SaveTask extends AsyncTask<Void,Void,Void> {
@@ -125,12 +139,10 @@ public class AddTaskActivity extends AppCompatActivity implements AdapterView.On
                 task.setDesc(sDesc);
                 task.setFinishBy(sFinishBy);
                 task.setFinished(false);
+                task.setGender(sSpinner);
 
                 //adding to database
-                DatabaseClient.getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .taskDao()
-                        .insert(task);
+                taskDao.insert(task);
                 return null;
             }
 

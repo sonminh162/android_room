@@ -35,6 +35,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.bindView(task);
         if(task.isFinished()){
             holder.textViewStatus.setText("Finished");
+            holder.textViewStatus.setBackgroundColor(0xFF93C47D);
         }
         else{
             holder.textViewStatus.setText("Studying");
@@ -48,7 +49,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewStatus, textViewTask, textViewDesc, textViewFinishBy, textViewBirth;
+        TextView textViewStatus, textViewTask, textViewDesc, textViewFinishBy, textViewBirth, textViewGender;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -58,6 +59,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textViewDesc = itemView.findViewById(R.id.textViewDesc);
             textViewFinishBy = itemView.findViewById(R.id.textViewFinishBy);
             textViewBirth = itemView.findViewById(R.id.textViewBirth);
+            textViewGender = itemView.findViewById(R.id.textViewGender);
 
             itemView.setOnClickListener(this);
         }
@@ -77,6 +79,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             textViewDesc.setText(task.getDesc());
             textViewFinishBy.setText(task.getFinishBy());
             textViewBirth.setText(task.getBirthday());
+            textViewGender.setText(task.getGender());
         }
     }
 }

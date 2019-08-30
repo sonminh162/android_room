@@ -20,6 +20,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    boolean aToZSortNextTime = true;
     private FloatingActionButton buttonAddTask,buttonSortTask;
     private RecyclerView recyclerView;
 
@@ -27,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final TaskDao taskDao = DatabaseClient
+                .getInstance(getApplicationContext())
+                .getAppDatabase()
+                .taskDao();
 
         recyclerView = findViewById(R.id.recycler_tasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -44,25 +50,27 @@ public class MainActivity extends AppCompatActivity {
         buttonSortTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sortTask();
+
+                if(aToZSortNextTime){
+                    sortTaskAZ(taskDao);
+                    aToZSortNextTime = false;
+                }else {
+                    sortTaskZA(taskDao);
+                    aToZSortNextTime = true;
+                }
             }
         });
 
-        getTasks();
+        getTasks(taskDao);
 
     }
 
-    private void sortTask(){
+    private void sortTaskAZ(final TaskDao taskDao){
         class SortTasks extends AsyncTask<Void,Void,List<Task>>{
 
             @Override
             protected List<Task> doInBackground(Void... voids) {
-                List<Task> taskList = DatabaseClient
-                        .getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .taskDao()
-                        .sortData();
-                return taskList;
+                return taskDao.sortDataAtoZ();
             }
 
             @Override
@@ -79,17 +87,32 @@ public class MainActivity extends AppCompatActivity {
         gt.execute();
     }
 
-    private void getTasks(){
+    private void sortTaskZA(final TaskDao taskDao){
+        class SortTasks extends AsyncTask<Void,Void,List<Task>>{
+
+            @Override
+            protected List<Task> doInBackground(Void... voids) {
+                return taskDao.sortDataZtoA();
+            }
+
+            @Override
+            protected void onPostExecute(List<Task> tasks) {
+                super.onPostExecute(tasks);
+                TaskAdapter adapter = new TaskAdapter(MainActivity.this,tasks);
+                recyclerView.setAdapter(adapter);
+            }
+        }
+
+        SortTasks gt = new SortTasks();
+        gt.execute();
+    }
+
+    private void getTasks(final TaskDao taskDao){
         class GetTasks extends AsyncTask<Void,Void, List<Task>>{
 
             @Override
             protected List<Task> doInBackground(Void... voids) {
-                List<Task> taskList = DatabaseClient
-                        .getInstance(getApplicationContext())
-                        .getAppDatabase()
-                        .taskDao()
-                        .getAll();
-                return taskList;
+                return taskDao.getAll();
             }
 
             @Override
@@ -110,12 +133,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected List<Task> doInBackground(Void... voids) {
-                List<Task> taskList = DatabaseClient
+                return  DatabaseClient
                         .getInstance(getApplicationContext())
                         .getAppDatabase()
                         .taskDao()
                         .searchTaskByTaskName(taskName);
-                return taskList;
             }
 
             @Override

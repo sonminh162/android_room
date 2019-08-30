@@ -46,7 +46,7 @@
 
         <Spinner
             android:id="@+id/create_gender"
-            android:layout_width="@dimen/dp120"
+            android:layout_width="@dimen/dp160"
             android:layout_height="wrap_content"/>
 
         <Button

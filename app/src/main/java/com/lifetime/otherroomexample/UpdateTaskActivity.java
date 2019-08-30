@@ -3,12 +3,17 @@ package com.lifetime.otherroomexample;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -17,15 +22,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class UpdateTaskActivity extends AppCompatActivity {
+public class UpdateTaskActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    public static final String DATE_FORMAT = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
     private EditText editTextTask,editTextDesc,editTextFinishBy,editTextBirth;
     private CheckBox checkBoxFinished;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_task);
+
+        final TaskDao taskDao = DatabaseClient
+                .getInstance(getApplicationContext())
+                .getAppDatabase()
+                .taskDao();
 
         editTextTask = findViewById(R.id.update_name);
         editTextDesc = findViewById(R.id.update_address);
@@ -33,6 +45,8 @@ public class UpdateTaskActivity extends AppCompatActivity {
         editTextBirth = findViewById(R.id.update_birthday);
 
         checkBoxFinished = findViewById(R.id.checkBoxFinished);
+
+        spinner = findViewById(R.id.update_gender);
 
         editTextBirth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,11 +58,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
         final Task task = (Task) getIntent().getSerializableExtra("task");
         loadTask(task);
 
+        createSpinner();
+
         findViewById(R.id.button_update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
-                updateTask(task);
+                updateTask(task,taskDao);
             }
         });
 
@@ -60,7 +75,7 @@ public class UpdateTaskActivity extends AppCompatActivity {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        deleteTask(task);
+                        deleteTask(task,taskDao);
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -74,6 +89,13 @@ public class UpdateTaskActivity extends AppCompatActivity {
                 ad.show();
             }
         });
+    }
+
+    private void createSpinner(){
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.numbers,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
     private void pickDate(){
@@ -101,11 +123,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
         checkBoxFinished.setChecked(task.isFinished());
     }
 
-    private void updateTask(final Task task){
+    private void updateTask(final Task task,final TaskDao taskDao){
         final String sTask = editTextTask.getText().toString().trim();
         final String sDesc = editTextDesc.getText().toString().trim();
         final String sFinishBy = editTextFinishBy.getText().toString().trim();
         final String birthday = editTextBirth.getText().toString().trim();
+        final String sSpinner = spinner.getSelectedItem().toString();
         final boolean sChecked = checkBoxFinished.isChecked();
 
         if(sTask.isEmpty()) {
@@ -132,6 +155,22 @@ public class UpdateTaskActivity extends AppCompatActivity {
             return;
         }
 
+        boolean invalidDate = !birthday.matches(DATE_FORMAT);
+        if(invalidDate){
+            editTextBirth.setError("Format date");
+            editTextBirth.requestFocus();
+            return;
+        }
+
+        if(sSpinner.equals("Gender")){
+            TextView errorText = (TextView)spinner.getSelectedView();
+            errorText.setError("required");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+            errorText.setText("required");
+            spinner.requestFocus();
+            return;
+        }
+
         class UpdateTask extends AsyncTask<Void,Void,Void> {
 
             @Override
@@ -141,9 +180,8 @@ public class UpdateTaskActivity extends AppCompatActivity {
                 task.setFinishBy(sFinishBy);
                 task.setBirthday(birthday);
                 task.setFinished(sChecked);
-                DatabaseClient.getInstance(getApplicationContext()).getAppDatabase()
-                        .taskDao()
-                        .update(task);
+                task.setGender(sSpinner);
+                taskDao.update(task);
                 return null;
             }
 
@@ -160,12 +198,12 @@ public class UpdateTaskActivity extends AppCompatActivity {
         ut.execute();
     }
 
-    private void deleteTask(final Task task){
+    private void deleteTask(final Task task,final TaskDao taskDao){
         class DeleteTask extends AsyncTask<Void,Void,Void> {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                DatabaseClient.getInstance(getApplicationContext()).getAppDatabase().taskDao().delete(task);
+                taskDao.delete(task);
                 return null;
             }
 
@@ -180,5 +218,15 @@ public class UpdateTaskActivity extends AppCompatActivity {
 
         DeleteTask dt = new DeleteTask();
         dt.execute();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

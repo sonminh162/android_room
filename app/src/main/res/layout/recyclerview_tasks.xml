@@ -4,6 +4,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:elevation="@dimen/dp1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp3">
@@ -52,6 +53,13 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:text="27/6/2019"/>
+
+            <TextView
+                android:id="@+id/textViewGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:text="Female"/>
 
         </LinearLayout>
 
